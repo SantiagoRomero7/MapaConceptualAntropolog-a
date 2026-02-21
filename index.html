@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Conceptual: ¿Qué es la Antropología?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14;
+  --surface: #111827;
+  --surface2: #1c2439;
+  --gold: #f0a500;
+  --gold2: #ffd166;
+  --blue: #4a9eff;
+  --blue2: #7ec8ff;
+  --green: #56c27a;
+  --green2: #9de8b0;
+  --purple: #b57bee;
+  --purple2: #d4a8ff;
+  --red: #ff6b6b;
+  --red2: #ffaaaa;
+  --teal: #2dd4bf;
+  --teal2: #99f6e4;
+  --text: #eee8d8;
+  --text2: #a09880;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+#particles {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+.bg-aurora {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.aurora-blob {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12;
+  animation: drift 20s ease-in-out infinite alternate;
+}
+.blob1 { width:700px;height:700px;background:var(--blue);top:-200px;left:-200px;animation-delay:0s; }
+.blob2 { width:600px;height:600px;background:var(--purple);bottom:-100px;right:-150px;animation-delay:-7s; }
+.blob3 { width:500px;height:500px;background:var(--gold);top:40%;left:30%;animation-delay:-14s; }
+@keyframes drift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(60px,40px) scale(1.1); }
+}
+.progress-bar {
+  position:fixed;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple));
+  z-index:100;transform-origin:left;transform:scaleX(0);transition:transform 0.3s ease;
+}
+.explorer-badge {
+  position:fixed;top:16px;right:20px;z-index:100;
+  background:rgba(17,24,39,0.92);border:1px solid rgba(240,165,0,0.3);
+  border-radius:30px;padding:6px 16px;font-size:0.78rem;color:var(--gold);
+  backdrop-filter:blur(10px);display:flex;align-items:center;gap:8px;
+}
+.explorer-badge .count { font-weight:700;font-size:1rem;color:var(--gold2); }
+.wrapper {
+  position:relative;z-index:1;max-width:1420px;margin:0 auto;padding:60px 24px 80px;
+}
+/* HEADER */
+.map-header { text-align:center;margin-bottom:56px;animation:fadeDown 0.8s ease both; }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+.header-eyebrow {
+  font-size:0.73rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);
+  margin-bottom:12px;opacity:0.8;
+}
+.header-title {
+  font-family:'Playfair Display',serif;font-size:clamp(2.4rem,6vw,5rem);
+  font-weight:900;letter-spacing:-2px;line-height:1.05;position:relative;display:inline-block;
+}
+.gradient-text {
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 40%,var(--blue2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.header-title::after {
+  content:'';position:absolute;bottom:-10px;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--blue),transparent);
+  border-radius:2px;
+}
+.header-sub { margin-top:24px;font-size:0.92rem;color:var(--text2);letter-spacing:0.5px; }
+/* LEGEND */
+.legend {
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:44px;
+  animation:fadeUp 0.8s 0.3s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.legend-item {
+  display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text2);
+  background:rgba(255,255,255,0.04);padding:5px 12px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.07);transition:background 0.2s,border-color 0.2s;cursor:default;
+}
+.legend-item:hover { background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.15); }
+.legend-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+.legend-cross { width:22px;height:0;border-top:2px dashed var(--gold);flex-shrink:0; }
+/* TOOLTIP */
+.tooltip-overlay {
+  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.72);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.tooltip-overlay.visible { opacity:1;pointer-events:all; }
+.tooltip-box {
+  background:var(--surface2);border:1px solid rgba(255,255,255,0.12);border-radius:22px;
+  padding:36px 40px;max-width:500px;width:92%;position:relative;
+  transform:scale(0.88) translateY(24px);
+  transition:transform 0.35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 30px 80px rgba(0,0,0,0.85);
+}
+.tooltip-overlay.visible .tooltip-box { transform:scale(1) translateY(0); }
+.tooltip-icon { font-size:3rem;margin-bottom:14px; }
+.tooltip-title {
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:12px;
+}
+.tooltip-body { font-size:0.88rem;color:var(--text2);line-height:1.75; }
+.tooltip-close {
+  position:absolute;top:18px;right:22px;background:none;border:none;
+  color:var(--text2);font-size:1.5rem;cursor:pointer;transition:color 0.2s,transform 0.2s;
+}
+.tooltip-close:hover { color:var(--text);transform:rotate(90deg); }
+.tooltip-ref { margin-top:16px;font-size:0.73rem;color:rgba(255,255,255,0.3);font-style:italic; }
+.tooltip-tag {
+  display:inline-block;margin-bottom:10px;font-size:0.65rem;padding:3px 10px;
+  border-radius:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;
+  background:rgba(240,165,0,0.15);color:var(--gold);
+}
+/* NODES */
+.node {
+  border-radius:14px;padding:15px 19px;position:relative;cursor:pointer;
+  transition:transform 0.25s cubic-bezier(.34,1.56,.64,1),box-shadow 0.25s,border-color 0.25s;
+  animation:fadeUp 0.6s ease both;
+}
+.node:hover { transform:translateY(-4px) scale(1.015); }
+.node .label { font-family:'Playfair Display',serif;font-weight:700;line-height:1.25;pointer-events:none; }
+.node .desc { font-size:0.81rem;color:rgba(255,255,255,0.58);margin-top:5px;line-height:1.45;font-weight:300;pointer-events:none; }
+.node .tag {
+  display:inline-block;font-size:0.63rem;padding:2px 8px;border-radius:10px;
+  margin-top:6px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;pointer-events:none;
+}
+/* Central */
+.node-central {
+  background:linear-gradient(135deg,#7a4400 0%,#c47d0e 40%,var(--gold) 100%);
+  border:2px solid var(--gold2);
+  box-shadow:0 0 40px rgba(240,165,0,0.4),0 0 80px rgba(240,165,0,0.15),0 12px 40px rgba(0,0,0,0.6);
+  text-align:center;padding:28px 32px;
+}
+.node-central:hover {
+  box-shadow:0 0 60px rgba(240,165,0,0.6),0 0 120px rgba(240,165,0,0.2),0 12px 40px rgba(0,0,0,0.6);
+}
+.node-central .label { font-size:1.8rem;color:#fff;letter-spacing:2px; }
+.node-central .desc  { color:rgba(255,255,255,0.85);font-size:0.88rem;margin-top:10px; }
+.node-central .icon  { font-size:2.6rem;margin-bottom:8px;display:block; }
+.node-central::before {
+  content:'';position:absolute;inset:-6px;border-radius:20px;
+  background:conic-gradient(from 0deg,rgba(240,165,0,0.6),transparent 30%,rgba(255,209,102,0.6) 60%,transparent 80%,rgba(240,165,0,0.6));
+  border-radius:20px;opacity:0.5;pointer-events:none;
+  animation:rotateBorder 6s linear infinite;z-index:-1;filter:blur(4px);
+}
+@keyframes rotateBorder { to { transform:rotate(360deg); } }
+/* L1 */
+.node-l1 { border-left:4px solid;background:var(--surface2);box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+.node-l1 .label { font-size:1.05rem; }
+/* L2 */
+.node-l2 { background:var(--surface);border-left:3px solid;box-shadow:0 2px 12px rgba(0,0,0,0.4); }
+.node-l2 .label { font-size:0.91rem;font-family:'DM Sans',sans-serif;font-weight:600; }
+/* L3 */
+.node-l3 {
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
+  border-radius:10px;padding:9px 13px;
+}
+.node-l3:hover { background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.18); }
+.node-l3 .label { font-size:0.8rem;font-family:'DM Sans',sans-serif;font-weight:500; }
+/* Colors */
+.c-gold   { border-color:var(--gold); }   .c-gold   .label { color:var(--gold);    }
+.c-blue   { border-color:var(--blue); }   .c-blue   .label { color:var(--blue2);   }
+.c-green  { border-color:var(--green); }  .c-green  .label { color:var(--green2);  }
+.c-purple { border-color:var(--purple); } .c-purple .label { color:var(--purple2); }
+.c-red    { border-color:var(--red); }    .c-red    .label { color:var(--red2);    }
+.c-teal   { border-color:var(--teal); }   .c-teal   .label { color:var(--teal2);   }
+.c-blue:hover   { box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 20px rgba(74,158,255,0.2); }
+.c-green:hover  { box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 20px rgba(86,194,122,0.2); }
+.c-purple:hover { box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 20px rgba(181,123,238,0.2); }
+.c-teal:hover   { box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 20px rgba(45,212,191,0.2); }
+.c-gold:hover   { box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 20px rgba(240,165,0,0.25); }
+/* Tags */
+.tag-gold   { background:rgba(240,165,0,0.15);  color:var(--gold); }
+.tag-blue   { background:rgba(74,158,255,0.15); color:var(--blue2); }
+.tag-green  { background:rgba(86,194,122,0.15); color:var(--green2); }
+.tag-purple { background:rgba(181,123,238,0.15);color:var(--purple2); }
+.tag-red    { background:rgba(255,107,107,0.15);color:var(--red2); }
+.tag-teal   { background:rgba(45,212,191,0.15); color:var(--teal2); }
+/* CONNECTOR */
+.link {
+  font-size:0.69rem;color:var(--text2);text-align:center;font-style:italic;
+  padding:1px 0;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.link::before,.link::after { content:'';flex:1;height:1px; }
+.link::before { background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12)); }
+.link::after  { background:linear-gradient(90deg,rgba(255,255,255,0.12),transparent); }
+/* Cross-link */
+.cross-link {
+  border-radius:20px;padding:6px 14px;font-size:0.69rem;text-align:center;
+  font-style:italic;margin-top:8px;transition:background 0.2s,transform 0.2s;cursor:pointer;
+}
+.cross-link:hover { transform:scale(1.03); }
+.cross-gold   { background:rgba(240,165,0,0.1); border:1px dashed var(--gold);   color:var(--gold); }
+.cross-purple { background:rgba(181,123,238,0.1);border:1px dashed var(--purple);color:var(--purple2); }
+/* LAYOUT */
+.map-container { position:relative;animation:fadeUp 0.8s 0.5s ease both; }
+.map-grid { display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:30px;align-items:start; }
+.center-col { display:flex;flex-direction:column;align-items:center;gap:0; }
+.branch { display:flex;flex-direction:column;gap:7px; }
+.sub-group {
+  margin-left:18px;display:flex;flex-direction:column;gap:5px;
+  border-left:1px solid rgba(255,255,255,0.07);padding-left:12px;
+}
+/* METHOD */
+.method-section { margin-top:40px;animation:fadeUp 0.8s 0.8s ease both; }
+.method-title-wrap { text-align:center;margin-bottom:20px; }
+.method-steps {
+  display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+  gap:0;align-items:center;
+}
+.method-step {
+  background:var(--surface);border:1px solid rgba(255,255,255,0.07);
+  border-top:3px solid var(--teal);border-radius:12px;padding:16px 12px;
+  text-align:center;cursor:pointer;
+  transition:transform 0.25s cubic-bezier(.34,1.56,.64,1),box-shadow 0.25s;
+  position:relative;overflow:hidden;
+}
+.method-step::before {
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(45,212,191,0.06),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.method-step:hover { transform:translateY(-5px);box-shadow:0 0 24px rgba(45,212,191,0.25); }
+.method-step:hover::before { opacity:1; }
+.step-num { font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--teal);opacity:0.22;line-height:1; }
+.step-label { font-size:0.8rem;font-weight:600;color:var(--text);margin-top:4px;line-height:1.3; }
+.step-desc  { font-size:0.7rem;color:var(--text2);margin-top:4px; }
+.method-arrow { font-size:1.3rem;color:rgba(45,212,191,0.4);padding:0 6px; }
+/* REFERENCES */
+.references {
+  margin-top:56px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.07);
+  animation:fadeUp 0.8s 1s ease both;
+}
+.references h3 { font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);margin-bottom:18px;letter-spacing:1px; }
+.ref-item { font-size:0.82rem;color:var(--text2);line-height:1.8;padding-left:32px;text-indent:-32px;margin-bottom:10px; }
+.ref-item em { font-style:italic;color:var(--text); }
+@media(max-width:900px){
+  .map-grid { grid-template-columns:1fr; }
+  .method-steps { grid-template-columns:1fr 1fr; }
+  .method-arrow { display:none; }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f1117;
+    font-family: 'Source Sans 3', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .credits-box {
+    text-align: center;
+    animation: fadeIn 1.5s ease forwards;
+    padding: 40px;
+  }
+
+  .line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e8a045, transparent);
+    margin: 16px auto;
+  }
+
+  .label {
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #9a9580;
+    font-weight: 300;
+  }
+
+  .name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 5vw, 2.4rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #e8a045, #f5c842, #5b9bd5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 8px 0;
+    line-height: 1.3;
+  }
+
+  .sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  .year {
+    font-size: 0.75rem;
+    color: #e8a045;
+    letter-spacing: 3px;
+    margin-top: 4px;
+    opacity: 0.7;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="bg-aurora">
+  <div class="aurora-blob blob1"></div>
+  <div class="aurora-blob blob2"></div>
+  <div class="aurora-blob blob3"></div>
+</div>
+<div class="progress-bar" id="progressBar"></div>
+<div class="explorer-badge">
+  🔍 Explorado: <span class="count" id="exploredCount">0</span> / <span id="totalCount">0</span>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip-overlay" id="tooltipOverlay">
+  <div class="tooltip-box">
+    <button class="tooltip-close" id="tooltipClose">✕</button>
+    <div class="tooltip-icon"  id="tipIcon"></div>
+    <div class="tooltip-tag"   id="tipTag"></div>
+    <div class="tooltip-title" id="tipTitle"></div>
+    <div class="tooltip-body"  id="tipBody"></div>
+    <div class="tooltip-ref"   id="tipRef"></div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="map-header">
+    <div class="header-eyebrow">Actividad 1 · Mapa Conceptual · Normas APA 7.ª edición</div>
+    <div class="header-title"><span class="gradient-text">¿Qué es la Antropología?</span></div>
+    <div class="header-sub">✦ Haz clic en cualquier concepto para explorar su definición completa ✦</div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Concepto Central</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Subdisciplinas</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Diversidad Humana</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Campos Relacionados</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Antropología Aplicada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Método Científico</div>
+    <div class="legend-item"><div class="legend-cross"></div>Enlace cruzado</div>
+  </div>
+
+  <div class="map-container">
+    <div class="map-grid">
+
+      <!-- LEFT -->
+      <div class="branch">
+        <div class="node node-l1 c-green"
+          data-icon="🌍" data-tag="Concepto clave" data-title="Diversidad Humana"
+          data-body="La diversidad humana abarca las variaciones biológicas, culturales, lingüísticas y sociales que existen entre los seres humanos. La antropología estudia esta diversidad para comprender qué nos une y qué nos diferencia como especie, rechazando explicaciones raciales simplistas y promoviendo una visión compleja del ser humano."
+          data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill.">
+          <div class="label">🌍 Diversidad Humana</div>
+          <div class="desc">Variación biológica y cultural entre poblaciones humanas</div>
+          <span class="tag tag-green">Concepto clave</span>
+        </div>
+        <div class="link">comprende</div>
+        <div class="sub-group">
+          <div class="node node-l2 c-green"
+            data-icon="🧬" data-tag="Proceso evolutivo" data-title="Adaptación"
+            data-body="La adaptación es el proceso evolutivo mediante el cual los organismos desarrollan características que les permiten sobrevivir en su entorno. En antropología, se estudia tanto la adaptación biológica (cambios genéticos) como la adaptación cultural (tecnología, comportamiento, normas sociales) a distintos ambientes físicos y sociales."
+            data-ref="Harris, M. (2001). Antropología cultural. Alianza Editorial.">
+            <div class="label">🧬 Adaptación</div>
+            <div class="desc">Ajuste evolutivo al entorno físico y social</div>
+          </div>
+          <div class="node node-l2 c-green"
+            data-icon="🔬" data-tag="Diversidad biológica" data-title="Variación"
+            data-body="La variación biológica y cultural entre individuos y grupos es objeto central de la antropología. Abarca diferencias en rasgos físicos, prácticas culturales, sistemas de creencias y estructuras sociales. No existen razas humanas puras; la variación es continua y multidimensional, y la biología moderna rechaza las clasificaciones raciales del siglo XIX."
+            data-ref="Ember, C. R., y Ember, M. (2011). Antropología cultural (12.ª ed.). Pearson Educación.">
+            <div class="label">🔬 Variación</div>
+            <div class="desc">Diferencias fenotípicas y culturales entre grupos</div>
+          </div>
+          <div class="node node-l2 c-green"
+            data-icon="🔄" data-tag="Dinámica cultural" data-title="Cambio Cultural"
+            data-body="El cambio cultural es la transformación en las prácticas, valores, tecnologías y creencias de una sociedad a través del tiempo. Puede ocurrir por innovación interna, difusión desde otras culturas o respuesta adaptativa al entorno. La antropología busca explicar los mecanismos y patrones de este cambio sin juzgarlo como 'progreso' en sentido evolutivo unilineal."
+            data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill.">
+            <div class="label">🔄 Cambio Cultural</div>
+            <div class="desc">Transformación de prácticas y creencias en el tiempo</div>
+          </div>
+        </div>
+        <div class="link" style="margin-top:8px">genera</div>
+        <div class="node node-l1 c-gold"
+          data-icon="⚡" data-tag="Concepto integrador" data-title="Fuerzas Culturales"
+          data-body="Las fuerzas culturales son los factores sociales, económicos, históricos y simbólicos que moldean la biología humana. Desde la dieta hasta las prácticas reproductivas, la cultura determina en gran medida cómo se expresa el genoma humano. Este es uno de los hallazgos más significativos de la antropología biológica contemporánea: cultura y biología son inseparables."
+          data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill.">
+          <div class="label">⚡ Fuerzas Culturales</div>
+          <div class="desc">Dan forma a la biología humana e influyen en la expresión genética</div>
+          <span class="tag tag-gold">Concepto integrador</span>
+        </div>
+        <div class="link">incluye</div>
+        <div class="sub-group">
+          <div class="node node-l3"
+            data-icon="🥗" data-tag="Ejemplo" data-title="Nutrición y dieta cultural"
+            data-body="Las preferencias alimenticias, tabúes y acceso a nutrientes varían culturalmente y tienen impactos directos en la salud, estatura, desarrollo cognitivo y expresión genética de las poblaciones. Un ejemplo es la tolerancia a la lactosa: culturas pastoriles desarrollaron una mutación genética que permite digerirla en la adultez.">
+            <div class="label">🥗 Nutrición y dieta cultural</div>
+          </div>
+          <div class="node node-l3"
+            data-icon="👶" data-tag="Ejemplo" data-title="Prácticas reproductivas"
+            data-body="Las normas culturales sobre matrimonio, familia y reproducción —endogamia, exogamia, poligamia, monogamia— influyen directamente en la distribución genética de las poblaciones y en los patrones evolutivos de la especie humana a largo plazo.">
+            <div class="label">👶 Prácticas reproductivas</div>
+          </div>
+          <div class="node node-l3"
+            data-icon="🏙️" data-tag="Ejemplo" data-title="Ambiente construido"
+            data-body="El entorno edificado por el ser humano —ciudades, tecnología, infraestructura sanitaria— crea condiciones selectivas únicas que afectan la salud, el estrés, la resistencia a enfermedades y la adaptación biológica de las poblaciones modernas.">
+            <div class="label">🏙️ Ambiente construido</div>
+          </div>
+        </div>
+        <div class="cross-link cross-gold"
+          data-icon="🔗" data-tag="Enlace cruzado" data-title="Relación: Fuerzas Culturales ↔ Antropología Biológica"
+          data-body="Las fuerzas culturales y la antropología biológica están profundamente interconectadas: la antropología biológica estudia cómo las prácticas culturales moldean la evolución y variación biológica humana, mientras que las condiciones biológicas también limitan y posibilitan las prácticas culturales. Esta interacción es bidireccional y continua.">
+          ↔ Se relaciona con Antropología Biológica
+        </div>
+      </div>
+
+      <!-- CENTER -->
+      <div class="center-col">
+        <div class="node node-central" style="width:100%;"
+          data-icon="🌐" data-tag="Concepto central" data-title="Antropología"
+          data-body="La Antropología es la ciencia más humana de las ciencias y la más científica de las humanidades. Estudia al ser humano de forma holística: su biología, su cultura, sus lenguas y su historia a través del tiempo y el espacio. Integra perspectivas evolutivas, comparativas y relativistas para comprender la diversidad y unidad de la especie humana en toda su riqueza."
+          data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill, p. 4.">
+          <span class="icon">🌐</span>
+          <div class="label">ANTROPOLOGÍA</div>
+          <div class="desc">Ciencia holística que estudia al ser humano biológica, cultural, lingüística e históricamente, a través del tiempo y el espacio</div>
+        </div>
+        <div class="link" style="padding:8px 0;font-size:0.76rem">se divide en</div>
+        <div class="node node-l1 c-blue" style="width:100%;"
+          data-icon="📚" data-tag="Organización" data-title="Subdisciplinas de la Antropología"
+          data-body="La antropología se organiza en cuatro subdisciplinas principales que, aunque tienen métodos y objetos de estudio distintos, comparten el enfoque holístico y comparativo propio de la disciplina. En conjunto permiten estudiar al ser humano desde ángulos biológico, cultural, histórico y lingüístico de manera integrada.">
+          <div class="label">📚 Subdisciplinas de la Antropología</div>
+          <div class="desc">Cuatro ramas complementarias que integran el estudio holístico del ser humano</div>
+        </div>
+        <div class="link">comprenden</div>
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;">
+          <div class="node node-l2 c-blue"
+            data-icon="🏛️" data-tag="Subdisciplina" data-title="Antropología Cultural"
+            data-body="Estudia las culturas humanas contemporáneas: su organización social, sistemas de creencias, prácticas simbólicas, economías y estructuras políticas. Emplea la etnografía —observación participante prolongada— como principal método. Busca comprender las culturas desde adentro, aplicando el relativismo cultural como herramienta metodológica y ética."
+            data-ref="American Anthropological Association. (2023). What is anthropology?">
+            <div class="label">🏛️ Antropología Cultural</div>
+            <div class="desc">Culturas contemporáneas; etnografía y relativismo cultural</div>
+            <span class="tag tag-blue">Subdisciplina</span>
+          </div>
+          <div class="node node-l2 c-blue"
+            data-icon="🦴" data-tag="Subdisciplina" data-title="Antropología Biológica o Física"
+            data-body="Estudia la evolución humana, la primatología, la variación biológica entre poblaciones y la paleoantropología (análisis de fósiles humanos). Busca entender cómo llegamos a ser la especie que somos hoy y cómo continuamos evolucionando. Integra biología evolutiva, genética de poblaciones y ecología comportamental."
+            data-ref="Ember, C. R., y Ember, M. (2011). Antropología cultural (12.ª ed.). Pearson Educación.">
+            <div class="label">🦴 Antropología Biológica o Física</div>
+            <div class="desc">Evolución humana, primatología, variación biológica y paleoantropología</div>
+            <span class="tag tag-blue">Subdisciplina</span>
+          </div>
+          <div class="node node-l2 c-blue"
+            data-icon="⛏️" data-tag="Subdisciplina" data-title="Antropología Arqueológica"
+            data-body="Reconstruye el pasado humano mediante el análisis de artefactos, estructuras y restos materiales. Abarca desde los primeros homínidos hasta culturas del siglo XX. Permite entender cómo vivían, pensaban y organizaban su sociedad las personas antes de la escritura y a lo largo de toda la historia humana registrada materialmente."
+            data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill.">
+            <div class="label">⛏️ Antropología Arqueológica</div>
+            <div class="desc">Reconstrucción del pasado mediante artefactos y restos materiales</div>
+            <span class="tag tag-blue">Subdisciplina</span>
+          </div>
+          <div class="node node-l2 c-blue"
+            data-icon="🗣️" data-tag="Subdisciplina" data-title="Antropología Lingüística"
+            data-body="Estudia la relación entre lenguaje, cultura y sociedad. Analiza la diversidad de las 6,000+ lenguas humanas, cómo el lenguaje moldea el pensamiento (hipótesis Sapir-Whorf), la adquisición del lenguaje y los procesos de cambio lingüístico. También trabaja en la documentación de lenguas en riesgo de extinción."
+            data-ref="Ember, C. R., y Ember, M. (2011). Antropología cultural (12.ª ed.). Pearson Educación.">
+            <div class="label">🗣️ Antropología Lingüística</div>
+            <div class="desc">Lenguaje, cultura y sociedad; diversidad y cambio lingüístico</div>
+            <span class="tag tag-blue">Subdisciplina</span>
+          </div>
+        </div>
+        <div class="link" style="margin-top:10px;padding:6px 0">aplica a través de</div>
+        <div class="node node-l1 c-red" style="width:100%;"
+          data-icon="🔧" data-tag="Práctica profesional" data-title="Antropología Aplicada"
+          data-body="La antropología aplicada utiliza los métodos y conocimientos antropológicos para resolver problemas prácticos del mundo real. Trabaja en áreas como salud pública, desarrollo internacional, educación, política social, negocios y justicia. Es considerada la quinta subdisciplina de la antropología y conecta la investigación académica con la acción social."
+          data-ref="American Anthropological Association. (2023). What is anthropology?">
+          <div class="label">🔧 Antropología Aplicada</div>
+          <div class="desc">Conocimiento antropológico para resolver problemas reales: salud, educación, desarrollo y política pública</div>
+          <span class="tag tag-red">Práctica profesional</span>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="branch">
+        <div class="node node-l1 c-purple"
+          data-icon="🔗" data-tag="Interdisciplinariedad" data-title="Antropología y Otros Campos Académicos"
+          data-body="La antropología mantiene un diálogo constante con otras ciencias sociales y humanidades. Se diferencia por su enfoque holístico, su método etnográfico y su compromiso con el relativismo cultural. Sin embargo, toma prestados conceptos y métodos de sociología, psicología, historia, biología, lingüística y otras disciplinas, enriqueciéndose mutuamente."
+          data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill.">
+          <div class="label">🔗 Antropología y Otros Campos</div>
+          <div class="desc">Diálogo interdisciplinario con ciencias sociales y humanidades</div>
+          <span class="tag tag-purple">Interdisciplinariedad</span>
+        </div>
+        <div class="link">se conecta con</div>
+        <div class="node node-l2 c-purple"
+          data-icon="🏙️" data-tag="Campo relacionado" data-title="Antropología Cultural y Sociología"
+          data-body="Ambas disciplinas estudian la sociedad humana, pero difieren en sus métodos y enfoques. La antropología prioriza el trabajo de campo etnográfico en culturas diversas (incluyendo no-occidentales), el holismo y el relativismo cultural. La sociología se enfoca principalmente en sociedades industriales usando encuestas estadísticas, experimentos y análisis cuantitativos a gran escala."
+          data-ref="Kottak, C. P. (2011). Antropología cultural (14.ª ed.). McGraw-Hill, p. 12.">
+          <div class="label">🏙️ Antropología y Sociología</div>
+          <div class="desc">Ambas estudian la sociedad; diferenciadas por método, escala y enfoque cultural</div>
+        </div>
+        <div class="link">se diferencia en</div>
+        <div class="sub-group">
+          <div class="node node-l3"
+            data-icon="📋" data-tag="Diferencia metodológica" data-title="Etnografía vs. encuesta estadística"
+            data-body="La etnografía es el método central de la antropología: observación participante prolongada dentro de una comunidad, generalmente entre 1 y 2 años. La sociología prefiere encuestas masivas y análisis estadístico para estudiar grandes poblaciones con representatividad numérica.">
+            <div class="label">📋 Etnografía vs. encuesta estadística</div>
+          </div>
+          <div class="node node-l3"
+            data-icon="🌀" data-tag="Diferencia conceptual" data-title="Holismo vs. especialización"
+            data-body="La antropología busca integrar todos los aspectos de la vida humana en su análisis (holismo). La sociología tiende a especializarse en subsistemas sociales particulares como la estratificación, las organizaciones formales, el crimen o la familia.">
+            <div class="label">🌀 Holismo vs. especialización</div>
+          </div>
+        </div>
+        <div style="margin-top:14px"></div>
+        <div class="node node-l2 c-purple"
+          data-icon="🧠" data-tag="Campo relacionado" data-title="Antropología y Psicología"
+          data-body="La psicología cultural y la psicología transcultural examinan cómo la cultura moldea la personalidad, las emociones y la cognición. La antropología cuestiona los supuestos universales de la psicología occidental y aporta evidencia etnográfica de la variación cultural en procesos mentales, valores y conductas que se creían biológicamente innatos."
+          data-ref="Harris, M. (2001). Antropología cultural. Alianza Editorial.">
+          <div class="label">🧠 Antropología y Psicología</div>
+          <div class="desc">Cultura, personalidad y cognición intercultural; relativismo psicológico</div>
+        </div>
+        <div class="link">estudia</div>
+        <div class="sub-group">
+          <div class="node node-l3"
+            data-icon="😊" data-tag="Tema de estudio" data-title="Personalidad y cultura"
+            data-body="Las culturas moldean la personalidad de sus miembros de manera diferente. Margaret Mead demostró en Samoa que la adolescencia turbulenta no es universal: es un producto cultural. Lo que se considera 'normal' o 'saludable' varía significativamente entre culturas.">
+            <div class="label">😊 Personalidad y cultura</div>
+          </div>
+          <div class="node node-l3"
+            data-icon="💭" data-tag="Tema de estudio" data-title="Cognición intercultural"
+            data-body="La antropología cognitiva estudia cómo los sistemas culturales —lenguaje, rituales, tecnología, arte— dan forma a la percepción, la categorización, la memoria y la resolución de problemas. Distintas culturas pueden categorizar colores, parentesco o emociones de formas radicalmente diferentes.">
+            <div class="label">💭 Cognición intercultural</div>
+          </div>
+          <div class="node node-l3"
+            data-icon="⚖️" data-tag="Principio teórico" data-title="Relativismo cultural vs. universales"
+            data-body="El relativismo cultural postula que las conductas deben comprenderse en su propio contexto cultural, sin juzgarlas con criterios externos. Sin embargo, la antropología también busca universales humanos: rasgos como el lenguaje, el incesto como tabú, el juego y el arte, presentes en todas las culturas conocidas.">
+            <div class="label">⚖️ Relativismo cultural vs. universales</div>
+          </div>
+        </div>
+        <div class="cross-link cross-purple"
+          data-icon="🔗" data-tag="Enlace cruzado" data-title="Relación: Psicología ↔ Antropología Lingüística"
+          data-body="La antropología psicológica y la antropología lingüística comparten interés por cómo el lenguaje moldea la cognición y las emociones. La hipótesis Sapir-Whorf conecta ambas subdisciplinas: el lenguaje que hablamos influye en cómo percibimos y pensamos la realidad, lo que tiene implicaciones tanto psicológicas como culturales.">
+          ↔ Comparte enfoque con Antropología Lingüística
+        </div>
+        <div style="margin-top:18px"></div>
+        <div class="node node-l1 c-teal"
+          data-icon="🔭" data-tag="Principio fundamental" data-title="Enfoque Holístico"
+          data-body="El holismo es el principio fundamental que distingue a la antropología de otras ciencias sociales. Significa estudiar al ser humano desde todas sus dimensiones —biológica, cultural, histórica y lingüística— de manera integrada y sin reduccionismos. Para la antropología, no se puede entender una parte de la humanidad sin considerar el todo."
+          data-ref="American Anthropological Association. (2023). What is anthropology?">
+          <div class="label">🔭 Enfoque Holístico</div>
+          <div class="desc">Integración de biología, cultura, lenguaje e historia para comprender al ser humano en su totalidad</div>
+          <span class="tag tag-teal">Principio fundamental</span>
+        </div>
+      </div>
+
+    </div><!-- end .map-grid -->
+
+    <!-- MÉTODO CIENTÍFICO -->
+    <div class="method-section">
+      <div class="method-title-wrap">
+        <div class="node node-l1 c-teal" style="display:inline-block;padding:12px 32px;cursor:pointer;"
+          data-icon="⚗️" data-tag="Fundamento epistemológico" data-title="Método Científico en Antropología"
+          data-body="El método científico es la base epistemológica de la antropología. A diferencia de otras ciencias, la antropología combina métodos cualitativos (etnografía, entrevistas en profundidad, historia oral) y cuantitativos (estadística, análisis genético, datación radiométrica) para producir conocimiento riguroso sobre la diversidad humana. El trabajo de campo es su método más característico.">
+          <div class="label" style="font-size:1.1rem;text-align:center;">⚗️ Método Científico en Antropología</div>
+          <div class="desc" style="text-align:center;">Fundamento epistemológico · clic en cada etapa para profundizar</div>
+        </div>
+      </div>
+      <div class="method-steps">
+        <div class="method-step"
+          data-icon="👁️" data-tag="Etapa 1" data-title="Observación"
+          data-body="La observación sistemática es el punto de partida del conocimiento antropológico. Incluye la observación participante —convivir con la comunidad estudiada durante meses o años— y el registro detallado de comportamientos, rituales, artefactos y relaciones sociales en el diario de campo. Es una observación comprometida, no neutral.">
+          <div class="step-num">1</div>
+          <div class="step-label">Observación</div>
+          <div class="step-desc">Registro sistemático de fenómenos culturales</div>
+        </div>
+        <div class="method-arrow">→</div>
+        <div class="method-step"
+          data-icon="❓" data-tag="Etapa 2" data-title="Formulación del Problema"
+          data-body="A partir de la observación y la revisión de literatura, el antropólogo formula una pregunta de investigación precisa y culturalmente sensible. Esta pregunta debe ser relevante para la teoría antropológica, éticamente viable y posible de investigar mediante trabajo de campo u otros métodos disponibles.">
+          <div class="step-num">2</div>
+          <div class="step-label">Formulación del Problema</div>
+          <div class="step-desc">Pregunta de investigación etnográfica</div>
+        </div>
+        <div class="method-arrow">→</div>
+        <div class="method-step"
+          data-icon="💡" data-tag="Etapa 3" data-title="Hipótesis"
+          data-body="La hipótesis es una explicación tentativa basada en la observación inicial y el marco teórico existente. En antropología, las hipótesis suelen referirse a la relación entre variables culturales, ecológicas, biológicas o históricas, y deben ser contrastables con evidencia empírica recolectada en campo.">
+          <div class="step-num">3</div>
+          <div class="step-label">Hipótesis</div>
+          <div class="step-desc">Explicación tentativa basada en observación</div>
+        </div>
+        <div class="method-arrow">→</div>
+        <div class="method-step"
+          data-icon="⛺" data-tag="Etapa 4" data-title="Trabajo de Campo"
+          data-body="El trabajo de campo es el corazón del método antropológico. Puede durar meses o años e implica inmersión en la comunidad estudiada. Incluye etnografía, excavación arqueológica, recolección de muestras biológicas o documentación lingüística, según la subdisciplina. El investigador es simultáneamente instrumento y sujeto de la investigación.">
+          <div class="step-num">4</div>
+          <div class="step-label">Trabajo de Campo</div>
+          <div class="step-desc">Etnografía, excavación, análisis lingüístico</div>
+        </div>
+        <div class="method-arrow">→</div>
+        <div class="method-step"
+          data-icon="📖" data-tag="Etapa 5" data-title="Conclusiones y Teoría"
+          data-body="Las conclusiones integran los datos recolectados con el marco teórico para producir nueva teoría antropológica. Se publican en monografías etnográficas, artículos revisados por pares o informes aplicados. El conocimiento producido contribuye a la comprensión global de la diversidad y unidad humanas, retroalimentando nuevas observaciones.">
+          <div class="step-num">5</div>
+          <div class="step-label">Conclusiones y Teoría</div>
+          <div class="step-desc">Aporte al conocimiento humano</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .map-container -->
+
+  <!-- REFERENCES -->
+  <div class="references">
+    <h3>Referencias (APA 7.ª edición)</h3>
+    <div class="ref-item">American Anthropological Association. (2023). <em>What is anthropology?</em> https://www.americananthro.org/AdvanceYourCareer/Content.aspx?ItemNumber=2150</div>
+    <div class="ref-item">Ember, C. R., y Ember, M. (2011). <em>Antropología cultural</em> (12.ª ed.). Pearson Educación.</div>
+    <div class="ref-item">Harris, M. (2001). <em>Antropología cultural.</em> Alianza Editorial.</div>
+    <div class="ref-item">Kottak, C. P. (2011). <em>Antropología cultural</em> (14.ª ed.). McGraw-Hill.</div>
+  </div>
+
+  
+  <div class="credits-box">
+    <div class="label">Elaborado por</div>
+    <div class="line"></div>
+    <div class="name">Santiago Alejandro<br>Romero Saavedra</div>
+    <div class="line"></div>
+    <div class="sub">Antropología General · Actividad 1</div>
+    <div class="year">© 2025</div>
+
+</div>
+
+<script>
+// PARTICLES
+(function(){
+  const c=document.getElementById('particles'),ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  window.addEventListener('resize',resize); resize();
+  const COLS=['rgba(240,165,0,','rgba(74,158,255,','rgba(86,194,122,','rgba(181,123,238,','rgba(45,212,191,'];
+  for(let i=0;i<55;i++) pts.push({
+    x:Math.random()*2000,y:Math.random()*1200,
+    r:Math.random()*1.8+0.3,
+    vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28,
+    col:COLS[Math.floor(Math.random()*COLS.length)],
+    a:Math.random()*.45+.08,
+    p:Math.random()*Math.PI*2,ps:Math.random()*.02+.01
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.p+=p.ps;
+      const a=p.a*(0.7+0.3*Math.sin(p.p));
+      ctx.beginPath(); ctx.arc(p.x%W,p.y%H,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.col+a+')'; ctx.fill();
+      p.x+=p.vx; p.y+=p.vy;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// SCROLL PROGRESS
+window.addEventListener('scroll',()=>{
+  const el=document.documentElement;
+  const pct=el.scrollTop/(el.scrollHeight-el.clientHeight)||0;
+  document.getElementById('progressBar').style.transform=`scaleX(${pct})`;
+});
+
+// TOOLTIP + EXPLORER
+const overlay=document.getElementById('tooltipOverlay');
+const tipIcon=document.getElementById('tipIcon');
+const tipTag=document.getElementById('tipTag');
+const tipTitle=document.getElementById('tipTitle');
+const tipBody=document.getElementById('tipBody');
+const tipRef=document.getElementById('tipRef');
+const closeBtn=document.getElementById('tooltipClose');
+const countEl=document.getElementById('exploredCount');
+const totalEl=document.getElementById('totalCount');
+const allNodes=document.querySelectorAll('[data-title]');
+totalEl.textContent=allNodes.length;
+const explored=new Set();
+
+function openTip(n){
+  tipIcon.textContent=n.dataset.icon||'📌';
+  tipTag.textContent=n.dataset.tag||'';
+  tipTag.style.display=n.dataset.tag?'inline-block':'none';
+  tipTitle.textContent=n.dataset.title||'';
+  tipBody.textContent=n.dataset.body||'';
+  tipRef.textContent=n.dataset.ref?'📚 '+n.dataset.ref:'';
+  overlay.classList.add('visible');
+  document.body.style.overflow='hidden';
+  if(!explored.has(n.dataset.title)){
+    explored.add(n.dataset.title);
+    countEl.textContent=explored.size;
+    if(explored.size===allNodes.length) setTimeout(doConfetti,300);
+  }
+}
+function closeTip(){ overlay.classList.remove('visible'); document.body.style.overflow=''; }
+
+allNodes.forEach(n=>n.addEventListener('click',()=>openTip(n)));
+closeBtn.addEventListener('click',closeTip);
+overlay.addEventListener('click',e=>{ if(e.target===overlay) closeTip(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeTip(); });
+
+// CONFETTI
+function doConfetti(){
+  const cv=document.createElement('canvas');
+  cv.style.cssText='position:fixed;inset:0;z-index:9999;pointer-events:none;';
+  cv.width=window.innerWidth; cv.height=window.innerHeight;
+  document.body.appendChild(cv);
+  const c=cv.getContext('2d');
+  const colors=['#f0a500','#ffd166','#4a9eff','#56c27a','#b57bee','#2dd4bf','#ff6b6b'];
+  const ps=[];
+  for(let i=0;i<130;i++) ps.push({
+    x:Math.random()*cv.width,y:-20,
+    vx:(Math.random()-.5)*7,vy:Math.random()*5+2,
+    r:Math.random()*7+3,
+    col:colors[Math.floor(Math.random()*colors.length)],
+    rot:Math.random()*360,rotV:(Math.random()-.5)*9
+  });
+  let f=0;
+  function an(){
+    c.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p=>{
+      c.save(); c.translate(p.x,p.y); c.rotate(p.rot*Math.PI/180);
+      c.fillStyle=p.col; c.fillRect(-p.r/2,-p.r/2,p.r,p.r); c.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV; p.vy+=0.09;
+    });
+    if(++f<200) requestAnimationFrame(an); else cv.remove();
+  }
+  an();
+}
+
+// CURSOR TRAIL
+const trailStyle=document.createElement('style');
+trailStyle.textContent='@keyframes trailFade{to{opacity:0;transform:translate(-50%,-50%) scale(0)}}';
+document.head.appendChild(trailStyle);
+document.addEventListener('mousemove',e=>{
+  const d=document.createElement('div');
+  d.style.cssText=`position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:5px;height:5px;border-radius:50%;background:rgba(240,165,0,0.45);pointer-events:none;z-index:999;transform:translate(-50%,-50%);animation:trailFade 0.55s forwards;`;
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),550);
+});
+</script>
+</body>
+</html>
